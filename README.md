@@ -9,5 +9,4 @@ My implementation on bunch of policy value methods from scratch
       <li>REINFORCE</li>
     </ol>
   </li>
-  <li></li>
 </ol>
