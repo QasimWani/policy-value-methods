@@ -4,7 +4,7 @@ My implementation on bunch of policy value methods from scratch
 <ol>
   <li>Hill Climb</li>
   <li>Cross Entropy Method</li>
-  <li>
+  <li>Policy Gradient Methods
     <ol>
       <li>REINFORCE</li>
     </ol>
