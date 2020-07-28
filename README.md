@@ -7,6 +7,7 @@ My implementation on bunch of policy value methods from scratch
   <li>Policy Gradient Methods
     <ol>
       <li>REINFORCE</li>
+      <li>PPO (Proximal Policy Optimization)</li>
     </ol>
   </li>
 </ol>
