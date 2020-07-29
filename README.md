@@ -8,6 +8,7 @@ My implementation on bunch of policy value methods from scratch
     <ol>
       <li>REINFORCE</li>
       <li>PPO (Proximal Policy Optimization)</li>
+      <li>Actor Critic</li>
     </ol>
   </li>
 </ol>
