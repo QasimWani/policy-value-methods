@@ -4,13 +4,14 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from PIL import Image
 import cv2
-import progressbar as pb
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
+#Credits: DRLND, https://zhuanlan.zhihu.com/p/108034550
 
 #Define actions
 RIGHT = 4
