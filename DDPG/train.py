@@ -36,13 +36,6 @@ def ddpg(episodes, step, pretrained=False, noise=False):
             state = next_state.squeeze()
             score += reward
 
-            #Save model every 100 episodes
-            if(i%100):
-                print(f"\nMEAN REWARD: {np.mean(reward_list)}\n")
-                torch.save(agent.actor_local.state_dict(), 'checkpoint_actor_'+str("%03d" % (i//100))+'.pth')
-                torch.save(agent.critic_local.state_dict(), 'checkpoint_critic_'+str("%03d" % (i//100))+'.pth')
-                torch.save(agent.actor_target.state_dict(), 'checkpoint_actor_t_'+str("%03d" % (i//100))+'.pth')
-                torch.save(agent.critic_target.state_dict(), 'checkpoint_critic_t_'+str("%03d" % (i//100))+'.pth')
             if done:
                 #print recent statistics every 10 episodes
                 if(i%10):
@@ -52,6 +45,14 @@ def ddpg(episodes, step, pretrained=False, noise=False):
 
         reward_list.append(score)
 
+        #Save model every 100 episodes
+        if(i%100):
+            print(f"\nMEAN REWARD: {np.mean(reward_list)}\n")
+            torch.save(agent.actor_local.state_dict(), 'checkpoint_actor_'+str("%03d" % (i//100))+'.pth')
+            torch.save(agent.critic_local.state_dict(), 'checkpoint_critic_'+str("%03d" % (i//100))+'.pth')
+            torch.save(agent.actor_target.state_dict(), 'checkpoint_actor_t_'+str("%03d" % (i//100))+'.pth')
+            torch.save(agent.critic_target.state_dict(), 'checkpoint_critic_t_'+str("%03d" % (i//100))+'.pth')
+            
         if score >= 270:
             print('Task Solved')
             torch.save(agent.actor_local.state_dict(), 'checkpoint_actor.pth')
