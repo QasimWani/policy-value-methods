@@ -25,15 +25,61 @@ class Critic(nn.Module):
         4. fc2: number of hidden units in the second fully connected layer, default = 300.
         """
         super(Critic, self).__init__()
+        #Layer 1
         self.fc1 = nn.Linear(state_size, fc1)
-        self.fc2 = nn.Linear(fc1 + action_size, fc2) #the reasons why we're adding fc1 + action_size is because we need to map (staate, action) -> Q-values. 
-        self.fc3 = nn.Linear(fc2, 1) #Q-value
-        #Batch Normalization
         self.bn1 = nn.BatchNorm1d(fc1)
-    
+        #Layer 2
+        self.fc2 = nn.Linear(fc1 + action_size, fc2) #the reasons why we're adding fc1 + action_size is because we need to map (state, action) -> Q-values. 
+        self.bn2 = nn.BatchNorm1d(fc2)
+        #Output layer
+        self.q = nn.Linear(fc2, 1) #Q-value
+        
+
+        self.reset_parameters() #initialize weights
     def reset_parameters(self):
-        pass
+        """
+        Resets the parameters by setting a noise from distribution following from its respective hidden unit size.
+        Format for (-fx,fx) followed from the original paper.
+        """
+        
+        f1 = 1./np.sqrt(self.fc1.weight.data.size()[0])
+        self.fc1.weight.data.uniform_(-f1, f1)
+        self.fc1.bias.data.uniform_(-f1, f1)
+
+        f2 = 1./np.sqrt(self.fc2.weight.data.size()[0])
+        self.fc2.weight.data.uniform_(-f2, f2)
+        self.fc2.bias.data.uniform_(-f2, f2)
+
+        f3 = 0.003
+        self.q.weight.data.uniform_(-f3, f3)
+        self.q.bias.data.uniform_(-f3, f3)
+        
     def forward(self, state, action):
-        pass
+        """
+        Performs a single forward pass to map (state,action) to Q-value
+        @Param:
+        1. state: current observations, shape: (env.observation_space.shape[0],)
+        2. action: immediate action to evaluate against, shape: (env.action_space.shape[0],)
+        @Return:
+        - q-value
+        """
+        #Layer #1
+        x_state = self.fc1(state) #state_space -> fc1=200
+        x_state = self.bn1(x_state)
+        x_state = F.relu(x_state)
+        
+        #Layer #2
+        x = torch.cat((x_state, action), dim=1) #Concatenate state with action. Note that the specific way of passing x_state into layer #2.
+        x = self.fc2(x) #fc1=200 + action_space --> fc2=300
+        x = self.bn2(x)
+        x = F.relu(x)
+
+        #Output
+        value = self.q(x) #fc2=300 --> 1
+        return value
+
+        
+
+        
 
         
