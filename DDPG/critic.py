@@ -77,9 +77,3 @@ class Critic(nn.Module):
         #Output
         value = self.q(x) #fc2=300 --> 1
         return value
-
-        
-
-        
-
-        
