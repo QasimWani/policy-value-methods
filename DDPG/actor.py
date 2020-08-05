@@ -66,5 +66,5 @@ class Actor(nn.Module):
 
         #Output
         x = self.mu(x)
-        mu = F.tanh(x)
+        mu = torch.tanh(x)
         return mu
