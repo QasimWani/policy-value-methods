@@ -3,6 +3,7 @@ import torch
 import numpy as np
 from ddpg_agent import Agent
 import matplotlib.pyplot as plt
+from noise import OUNoise
 
 env = gym.make('BipedalWalker-v3')
 
@@ -11,7 +12,7 @@ action_dim = int(env.action_space.shape[0])
 agent = Agent(state_size=state_dim, action_size=action_dim)
 
 
-def ddpg(episodes, step, pretrained=False, noise=False):
+def ddpg(episodes, step, pretrained=False, noise=True):
 
     if pretrained:
         agent.actor_local.load_state_dict(torch.load('./models/weights/checkpoint_actor.pth', map_location="cpu"))
@@ -23,13 +24,14 @@ def ddpg(episodes, step, pretrained=False, noise=False):
     time_list = []
 
     for i in range(episodes):
-
+        
+        agent.reset()#reset OUNoise level
         state = env.reset()
         score = 0
 
         for t in range(step):
 
-            # env.render()
+            env.render()
 
             action = agent.act(state, add_noise=noise)
             next_state, reward, done, info = env.step(action[0])
@@ -72,7 +74,7 @@ def ddpg(episodes, step, pretrained=False, noise=False):
     return reward_list, time_list
 
 
-scores, time_list = ddpg(episodes=100, step=700, pretrained=False, noise=True)
+scores, time_list = ddpg(episodes=10, step=2000)
 
 #Display Scores
 fig = plt.figure()
