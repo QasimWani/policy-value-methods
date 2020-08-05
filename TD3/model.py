@@ -96,7 +96,3 @@ class Critic():
         q2 = self.l6(q2)
 
         return q1, q2
-
-
-
-
