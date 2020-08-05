@@ -40,15 +40,15 @@ def ddpg(episodes, step, pretrained=False, noise=False):
             if done:
                 #print recent statistics every 10 episodes
                 if(i%10 == 0):
-                    print('Reward: {} | Episode: {}/{}'.format(np.mean(reward_list[-10:]), i, episodes))
-                    print(f"Timesteps: {t}. Time (sec): {format(np.mean(time_list[-10:])/50, '.3f')}") #fps according to OpenAI = 50
+                    print('Reward: {} | Episode: {}/{}'.format(np.array(reward_list)[-10:].mean(), i, episodes))
+                    print(f"Timesteps: {t}. Time (sec): {format(np.array(time_list)[-10:].mean()/50, '.3f')}") #fps according to OpenAI = 50
                 break
 
         reward_list.append(score)
         time_list.append(t)
         #Save model every 100 episodes
         if(i%100 == 0):
-            print(f"\nMEAN REWARD: {np.mean(reward_list[-100:])}\n")
+            print(f"\nMEAN REWARD: {np.array(reward_list)[-100:].mean()}\n")
             torch.save(agent.actor_local.state_dict(), './models/checkpoint/checkpoint_actor_'+str("%03d" % (i//100))+'.pth')
             torch.save(agent.critic_local.state_dict(), './models/checkpoint/checkpoint_critic_'+str("%03d" % (i//100))+'.pth')
             torch.save(agent.actor_target.state_dict(), './models/checkpoint/checkpoint_actor_t_'+str("%03d" % (i//100))+'.pth')
