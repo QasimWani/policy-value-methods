@@ -1,4 +1,7 @@
+import numpy as np
 import copy
+import random
+
 #This class defines the OUNoise structure taken from Physics used originally for modelling the velocity of a Brownian particle.
 #We are using this to setup our noise because it follows the 3 conditions of MDP process and is Gaussian process.
 #Read more about Ornstein-Uhlenbeck process at: https://en.wikipedia.org/wiki/Ornstein%E2%80%93Uhlenbeck_process
