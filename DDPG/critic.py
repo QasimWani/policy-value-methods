@@ -26,8 +26,9 @@ class Critic(nn.Module):
         #Output layer
         self.q = nn.Linear(fc2, 1) #Q-value
         
+        #Initialize Weights
+        self.reset_parameters()
 
-        self.reset_parameters() #initialize weights
     def reset_parameters(self):
         """
         Resets the parameters by setting a noise from distribution following from its respective hidden unit size.
