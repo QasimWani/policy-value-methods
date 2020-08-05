@@ -2,17 +2,9 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from noise import OUNoise
 
-# Parameters for continuous control are taken from the original paper on DDPG: Continuous Control with Deep Reinforcement Learning, https://arxiv.org/pdf/1509.02971.pdf
 #Using Batch normalization, you can learn effectively across many different tasks with differing types of units. <-- According to the paper.
 #Moreover, it maintains a running average of the mean and variance to use for normalization during testing (exploration or evaluation).
-
-LEARNING_RATE = 1e-3 #critic learning rate
-GAMMA = 0.99 #discount factor
-WEIGHT_DECAY = 0.01 #L2 weight decay 
-TAU = 0.001 #soft target update
-
 
 class Critic(nn.Module):
     """Value approximator V(pi) as Q(s, a|θ)"""
