@@ -5,12 +5,12 @@ import torch.nn.functional as F
 
 class Actor(nn.Module):
     """Estimates the policy deterministically using tanh activation for continuous action space"""
-    def __init__(self, state_size, action_size, fc1=200, fc2=300):
+    def __init__(self, state_size, action_size, fc1=400, fc2=300):
         """
         @Param:
         1. state_size: number of observations, i.e. env.observation_space.shape[0] 
         2. action_size: number of actions, i.e. env.action_space.shape[0]
-        3. fc1: number of hidden units in the first fully connected layer. Default = 200.
+        3. fc1: number of hidden units in the first fully connected layer. Default = 400.
         4. fc2: number of hidden units in the second fully connected layer, default = 300.
         """
         super(Actor, self).__init__()

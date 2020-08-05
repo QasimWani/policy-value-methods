@@ -18,7 +18,7 @@ GAMMA = 0.99 #discount factor
 WEIGHT_DECAY = 0.01 #L2 weight decay 
 TAU = 0.001 #soft target update
 BUFFER_SIZE = int(1e6) #replay buffer size
-MINI_BATCH = 64 #minibatch size
+MINI_BATCH = 512 #minibatch size
 
 #Enable cuda if available
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -43,7 +43,7 @@ class Agent():
         #Critic network
         self.critic_local = Critic(self.state_size, self.action_size).to(device) #local model
         self.critic_target = Critic(self.state_size, self.action_size).to(device) #target model, TD-target
-        self.critic_optimizer = optim.Adam(self.critic_local.parameters(), lr=LR_CRITIC) #initialize optimizer using Adam as regularizer for Critic network.
+        self.critic_optimizer = optim.Adam(self.critic_local.parameters(), lr=LR_CRITIC, weight_decay=WEIGHT_DECAY) #initialize optimizer using Adam as regularizer for Critic network.
 
         #Noise proccess
         self.noise = OUNoise(action_size) #define Ornstein-Uhlenbeck process

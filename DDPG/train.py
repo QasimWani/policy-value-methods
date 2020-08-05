@@ -14,12 +14,13 @@ agent = Agent(state_size=state_dim, action_size=action_dim)
 def ddpg(episodes, step, pretrained=False, noise=False):
 
     if pretrained:
-        agent.actor_local.load_state_dict(torch.load('models/2/checkpoint_actor.pth', map_location="cpu"))
-        agent.critic_local.load_state_dict(torch.load('models/2/checkpoint_critic.pth', map_location="cpu"))
-        agent.actor_target.load_state_dict(torch.load('models/2/checkpoint_actor.pth', map_location="cpu"))
-        agent.critic_target.load_state_dict(torch.load('models/2/checkpoint_critic.pth', map_location="cpu"))
+        agent.actor_local.load_state_dict(torch.load('./models/weights/checkpoint_actor.pth', map_location="cpu"))
+        agent.critic_local.load_state_dict(torch.load('.models/weights/checkpoint_critic.pth', map_location="cpu"))
+        agent.actor_target.load_state_dict(torch.load('.models/weights/checkpoint_actor.pth', map_location="cpu"))
+        agent.critic_target.load_state_dict(torch.load('.models/weights/checkpoint_critic.pth', map_location="cpu"))
 
     reward_list = []
+    time_list = []
 
     for i in range(episodes):
 
@@ -30,7 +31,7 @@ def ddpg(episodes, step, pretrained=False, noise=False):
 
             # env.render()
 
-            action = agent.act(state, add_noise=True)
+            action = agent.act(state, add_noise=noise)
             next_state, reward, done, info = env.step(action[0])
             agent.step(state, action, reward, next_state, done)
             state = next_state.squeeze()
@@ -38,43 +39,51 @@ def ddpg(episodes, step, pretrained=False, noise=False):
 
             if done:
                 #print recent statistics every 10 episodes
-                if(i%10):
-                    print('Reward: {} | Episode: {}/{}'.format(score, i, episodes))
-                    print(f"Timesteps: {t}. Time (sec): {format(t/50, '.3f')}") #fps according to OpenAI = 50
+                if(i%10 == 0):
+                    print('Reward: {} | Episode: {}/{}'.format(np.mean(reward_list[-10:]), i, episodes))
+                    print(f"Timesteps: {t}. Time (sec): {format(np.mean(time_list[-10:])/50, '.3f')}") #fps according to OpenAI = 50
                 break
 
         reward_list.append(score)
-
+        time_list.append(t)
         #Save model every 100 episodes
-        if(i%100):
-            print(f"\nMEAN REWARD: {np.mean(reward_list)}\n")
-            torch.save(agent.actor_local.state_dict(), 'checkpoint_actor_'+str("%03d" % (i//100))+'.pth')
-            torch.save(agent.critic_local.state_dict(), 'checkpoint_critic_'+str("%03d" % (i//100))+'.pth')
-            torch.save(agent.actor_target.state_dict(), 'checkpoint_actor_t_'+str("%03d" % (i//100))+'.pth')
-            torch.save(agent.critic_target.state_dict(), 'checkpoint_critic_t_'+str("%03d" % (i//100))+'.pth')
+        if(i%100 == 0):
+            print(f"\nMEAN REWARD: {np.mean(reward_list[-100:])}\n")
+            torch.save(agent.actor_local.state_dict(), './models/checkpoint/checkpoint_actor_'+str("%03d" % (i//100))+'.pth')
+            torch.save(agent.critic_local.state_dict(), './models/checkpoint/checkpoint_critic_'+str("%03d" % (i//100))+'.pth')
+            torch.save(agent.actor_target.state_dict(), './models/checkpoint/checkpoint_actor_t_'+str("%03d" % (i//100))+'.pth')
+            torch.save(agent.critic_target.state_dict(), './models/checkpoint/checkpoint_critic_t_'+str("%03d" % (i//100))+'.pth')
             
         if score >= 270:
             print('Task Solved')
-            torch.save(agent.actor_local.state_dict(), 'checkpoint_actor.pth')
-            torch.save(agent.critic_local.state_dict(), 'checkpoint_critic.pth')
-            torch.save(agent.actor_target.state_dict(), 'checkpoint_actor_t.pth')
-            torch.save(agent.critic_target.state_dict(), 'checkpoint_critic_t.pth')
+            torch.save(agent.actor_local.state_dict(), './models/weights/checkpoint_actor.pth')
+            torch.save(agent.critic_local.state_dict(), './models/weights/checkpoint_critic.pth')
+            torch.save(agent.actor_target.state_dict(), './models/weights/checkpoint_actor_t.pth')
+            torch.save(agent.critic_target.state_dict(), './models/weights/checkpoint_critic_t.pth')
             break
         
 
-    torch.save(agent.actor_local.state_dict(), 'checkpoint_actor.pth')
-    torch.save(agent.critic_local.state_dict(), 'checkpoint_critic.pth')
-    torch.save(agent.actor_target.state_dict(), 'checkpoint_actor_t.pth')
-    torch.save(agent.critic_target.state_dict(), 'checkpoint_critic_t.pth')
+    torch.save(agent.actor_local.state_dict(), './models/weights/checkpoint_actor.pth')
+    torch.save(agent.critic_local.state_dict(), './models/weights/checkpoint_critic.pth')
+    torch.save(agent.actor_target.state_dict(), './models/weights/checkpoint_actor_t.pth')
+    torch.save(agent.critic_target.state_dict(), './models/weights/checkpoint_critic_t.pth')
 
     print('Training saved')
-    return reward_list
+    return reward_list, time_list
 
 
-scores = ddpg(episodes=10, step=2000, pretrained=False, noise=True)
+scores, time_list = ddpg(episodes=100, step=700, pretrained=False, noise=True)
 
+#Display Scores
 fig = plt.figure()
 plt.plot(np.arange(1, len(scores) + 1), scores)
 plt.ylabel('Score')
+plt.xlabel('Episode #')
+plt.show()
+
+#Display time
+fig = plt.figure()
+plt.plot(np.arange(1, len(time_list) + 1), time_list)
+plt.ylabel('Time')
 plt.xlabel('Episode #')
 plt.show()

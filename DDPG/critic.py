@@ -8,12 +8,12 @@ import torch.nn.functional as F
 
 class Critic(nn.Module):
     """Value approximator V(pi) as Q(s, a|θ)"""
-    def __init__(self, state_size, action_size, fc1=200, fc2=300):
+    def __init__(self, state_size, action_size, fc1=400, fc2=300):
         """
         @Param:
         1. state_size: number of observations, i.e. env.observation_space.shape[0] 
         2. action_size: number of actions, i.e. env.action_space.shape[0]
-        3. fc1: number of hidden units in the first fully connected layer. Default = 200.
+        3. fc1: number of hidden units in the first fully connected layer. Default = 400.
         4. fc2: number of hidden units in the second fully connected layer, default = 300.
         """
         super(Critic, self).__init__()
@@ -57,13 +57,13 @@ class Critic(nn.Module):
         - q-value
         """
         #Layer #1
-        x_state = self.fc1(state) #state_space -> fc1=200
+        x_state = self.fc1(state) #state_space -> fc1=400
         x_state = self.bn1(x_state)
         x_state = F.relu(x_state)
         
         #Layer #2
         x = torch.cat((x_state, action), dim=1) #Concatenate state with action. Note that the specific way of passing x_state into layer #2.
-        x = self.fc2(x) #fc1=200 + action_space --> fc2=300
+        x = self.fc2(x) #fc1=400 + action_space --> fc2=300
         x = self.bn2(x)
         x = F.relu(x)
 
