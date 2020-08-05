@@ -31,7 +31,7 @@ def ddpg(episodes, step, pretrained=False, noise=True):
 
         for t in range(step):
 
-            env.render()
+            # env.render()
 
             action = agent.act(state, add_noise=noise)
             next_state, reward, done, info = env.step(action[0])
@@ -74,7 +74,7 @@ def ddpg(episodes, step, pretrained=False, noise=True):
     return reward_list, time_list
 
 
-scores, time_list = ddpg(episodes=10, step=2000)
+scores, time_list = ddpg(episodes=5000, step=2000)
 
 #Display Scores
 fig = plt.figure()
