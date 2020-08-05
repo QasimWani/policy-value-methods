@@ -1,4 +1,4 @@
-import numpy as numpy
+import numpy as np
 import copy
 import random
 from collections import namedtuple, deque
@@ -17,7 +17,7 @@ LR_ACTOR = 1e-4 #actor learning rate
 GAMMA = 0.99 #discount factor
 WEIGHT_DECAY = 0.01 #L2 weight decay 
 TAU = 0.001 #soft target update
-BUFFER_SIZE = 1e6 #replay buffer size
+BUFFER_SIZE = int(1e6) #replay buffer size
 MINI_BATCH = 64 #minibatch size
 
 #Enable cuda if available
@@ -65,8 +65,8 @@ class Agent():
         self.memory.add(state, action, reward, next_state, done) #append to memory buffer
 
         #check if enough samples in buffer. if so, learn from experiences, otherwise, keep collecting samples.
-        experience = self.memory.sample()
-        if(len(experience) > MINI_BATCH):
+        if(len(self.memory) > MINI_BATCH):
+            experience = self.memory.sample()
             self.learn(experience)
 
     def reset(self):
@@ -184,7 +184,7 @@ class ReplayBuffer():
 
     def __len__(self):#override default __len__ operator
         """Return the current size of internal memory."""
-        return len(self.memory)
+        return len(self.replay_memory)
         
 
 
