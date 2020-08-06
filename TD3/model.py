@@ -9,15 +9,15 @@ import torch.nn.functional as F
 
 
 class Actor(nn.Module):
-    def __init__(self, state_size, action_size, max_action, fc1=256, fc2=256):
+    def __init__(self, state_size, action_size, max_action, fc1=400, fc2=300):
         """
         Initializes actor object.
         @Param:
         1. state_size: env.observation_space.shape[0].
         2. action_size: env.action_space.shape[0].
         3. max_action: abs(env.action_space.low), sets boundary/clip for policy approximation.
-        4. fc1: number of hidden units for the first fully connected layer, fc1. Default = 256.
-        5. fc2: number of hidden units for the second fully connected layer, fc1. Default = 256.
+        4. fc1: number of hidden units for the first fully connected layer, fc1. Default = 400.
+        5. fc2: number of hidden units for the second fully connected layer, fc1. Default = 300.
         """
         super(Actor, self).__init__()
 
@@ -45,15 +45,15 @@ class Actor(nn.Module):
 
 
 class Critic(nn.Module):
-    def __init__(self, state_size, action_size, fc1=256, fc2=256):
+    def __init__(self, state_size, action_size, fc1=400, fc2=300):
         """
         Initializes Critic object, Q1 and Q2.
         Architecture different from DDPG. See paper for full details.
         @Param:
         1. state_size: env.observation_space.shape[0].
         2. action_size: env.action_space.shape[0].
-        3. fc1: number of hidden units for the first fully connected layer, fc1. Default = 256.
-        4. fc2: number of hidden units for the second fully connected layer, fc1. Default = 256.
+        3. fc1: number of hidden units for the first fully connected layer, fc1. Default = 400.
+        4. fc2: number of hidden units for the second fully connected layer, fc1. Default = 300.
         """
         super(Critic, self).__init__()
 
