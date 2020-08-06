@@ -16,4 +16,4 @@ My implementation on bunch of policy value methods from scratch
 ### Results:
 
 <p>BipedalWalker-v3 (TD3)</p>
-![TD3 on BipedalWalker-v3](./assets/bipedal_td3.gif)
+![TD3 on BipedalWalker-v3](https://github.com/QasimWani/policy-value-methods/blob/master/assets/bipedal_td3.gif)
