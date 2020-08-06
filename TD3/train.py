@@ -7,15 +7,16 @@ import matplotlib.pyplot as plt
 import utils
 from TD3 import Agent
 
-env_id = "BipedalWalker-v3"
+env_id = "BipedalWalker-v2"
 env = gym.make(env_id)
 
 
 #set seeds
-env.seed(0)
-np.random.seed(0)
-torch.manual_seed(0)
-random.seed(0)
+# random_seed = 1
+# env.seed(random_seed)
+# np.random.seed(random_seed)
+# torch.manual_seed(random_seed)
+# random.seed(random_seed)
 
 
 #Set exploration noise for calculating action based on some noise factor
@@ -29,17 +30,17 @@ max_action = float(env.action_space.high[0])
 #Create Agent
 policy = Agent(state_space, action_space, max_action)
 
-# try:
-#     policy.load("10")
-# except:
-#     raise IOError("Couldn't load policy")
+try:
+    policy.load("09")
+except:
+    raise IOError("Couldn't load policy")
 
 #Create Replay Buffer
 replay_buffer = utils.ReplayBuffer()
 
 
 #Train the model
-max_episodes = 10000
+max_episodes = 1000
 max_timesteps = 2000
 
 ep_reward = [] #get list of reward for range(max_episodes)
@@ -49,8 +50,7 @@ for episode in range(1, max_episodes+1):
     state = env.reset()
     for t in range(1, max_timesteps + 1):
         # select action and add exploration noise:
-        action = policy.select_action(state)
-        action = action + np.random.normal(0, exploration_noise, size=env.action_space.shape[0])
+        action = policy.select_action(state) + np.random.normal(0, max_action * exploration_noise, size=action_space)
         action = action.clip(env.action_space.low, env.action_space.high)
             
         # take action in env:
@@ -68,7 +68,8 @@ for episode in range(1, max_episodes+1):
         if(done or t >=max_timesteps):
             print(f"Episode {episode} reward: {avg_reward} | Rolling average: {np.mean(ep_reward)}")
             print(f"Current time step: {t}")
-            policy.train(replay_buffer) #training mode
+            if(len(replay_buffer) > 256):#make sure sample is less than overall population
+                policy.train(replay_buffer) #training mode
             ep_reward.append(avg_reward)
             break 
     
@@ -76,9 +77,9 @@ for episode in range(1, max_episodes+1):
           policy.save("final")
           break
 
-    if(episode % 100 == 0):
+    if(episode % 100 == 0 and episode > 0):
         #Save policy and optimizer every 100 episodes
-        policy.save(str("%02d" % (episode//100)))
+        policy.save(str("%02d" % (10 + episode//100)))
 
 env.close()
 

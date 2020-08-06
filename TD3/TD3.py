@@ -72,7 +72,7 @@ class Agent():
         self.total_it += 1
 
         # Sample replay buffer 
-        state, action, reward, next_state, done = replay_buffer.sample()#sample 100 experiences
+        state, action, reward, next_state, done = replay_buffer.sample()#sample 256 experiences
 
         with torch.no_grad():
             # Select action according to policy and add clipped noise

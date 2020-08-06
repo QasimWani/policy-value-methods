@@ -11,7 +11,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 BUFFER_SIZE = int(1e6) #max number of experiences in a buffer
-MINI_BATCH = 100 #number of samples to collect from buffer
+MINI_BATCH = 256 #number of samples to collect from buffer
 
 class ReplayBuffer():
     """
