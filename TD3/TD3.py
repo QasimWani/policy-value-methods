@@ -46,7 +46,7 @@ class Agent():
         self.actor_optimizer = torch.optim.Adam(self.actor.parameters(), lr=3e-4)
 
         #Critic Network initialization
-        self.critic = Critic(state_dim, action_dim).to(device)
+        self.critic = Critic(state_size, action_size).to(device)
         self.critic_target = copy.deepcopy(self.critic) #loads main model into target model
         self.critic_optimizer = torch.optim.Adam(self.critic.parameters(), lr=3e-4)
 
