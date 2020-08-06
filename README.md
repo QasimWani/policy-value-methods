@@ -12,3 +12,8 @@ My implementation on bunch of policy value methods from scratch
     </ol>
   </li>
 </ol>
+
+### Results:
+
+<p>BipedalWalker-v3 (TD3)</p>
+![TD3 on BipedalWalker-v3](./assets/bipedal_td3.gif)
