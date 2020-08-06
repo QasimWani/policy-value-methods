@@ -2,6 +2,7 @@ import numpy as np
 import torch
 import gym
 import random
+import matplotlib.pyplot as plt
 
 import utils
 from TD3 import Agent
@@ -27,6 +28,11 @@ max_action = float(env.action_space.high[0])
 
 #Create Agent
 policy = Agent(state_space, action_space, max_action)
+
+try:
+    policy.load("00")
+except:
+    raise IOError("Couldn't load policy")
 
 #Create Replay Buffer
 replay_buffer = utils.ReplayBuffer()
@@ -55,9 +61,9 @@ for episode in range(1, max_episodes+1):
         avg_reward += reward
 
         #Renders an episode
-        env.render()
+        # env.render()
 
-        
+
         # if episode is done then update policy:
         if(done or t >=max_timesteps):
             print(f"Episode {episode} reward: {avg_reward} | Rolling average: {np.mean(ep_reward)}")
@@ -66,7 +72,7 @@ for episode in range(1, max_episodes+1):
             ep_reward.append(avg_reward)
             break 
     
-    if(episode % 100):
+    if(episode % 100 == 0):
         #Save policy and optimizer every 100 episodes
         policy.save(str("%02d" % (episode//100)))
 
