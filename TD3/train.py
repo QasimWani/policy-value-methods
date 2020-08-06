@@ -1,6 +1,7 @@
 import numpy as np
 import torch
 import gym
+import random
 
 import utils
 from TD3 import Agent
@@ -8,10 +9,16 @@ from TD3 import Agent
 env_id = "BipedalWalker-v3"
 env = gym.make(env_id)
 
+
 #set seeds
 env.seed(0)
 np.random.seed(0)
 torch.manual_seed(0)
+random.seed(0)
+
+
+#Set exploration noise for calculating action based on some noise factor
+exploration_noise = 0.1
 
 #Define observation and action space
 state_space = env.observation_space.shape[0]
@@ -42,17 +49,26 @@ for episode in range(1, max_episodes+1):
             
         # take action in env:
         next_state, reward, done, _ = env.step(action)
-        replay_buffer.add((state, action, reward, next_state, float(done)))
+        replay_buffer.add(state, action, reward, next_state, done)
         state = next_state
             
         avg_reward += reward
+
+        #Renders an episode
+        env.render()
+
+        
         # if episode is done then update policy:
         if(done or t >=max_timesteps):
             print(f"Episode {episode} reward: {avg_reward} | Rolling average: {np.mean(ep_reward)}")
             print(f"Current time step: {t}")
-            policy.update(replay_buffer, t, batch_size, gamma, polyak, policy_noise, noise_clip, policy_delay)
+            policy.train(replay_buffer) #training mode
             ep_reward.append(avg_reward)
-            break        
+            break 
+    
+    if(episode % 100):
+        #Save policy and optimizer every 100 episodes
+        policy.save(str("%02d" % (episode//100)))
 
 #Display Scores
 fig = plt.figure()

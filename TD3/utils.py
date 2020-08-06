@@ -1,8 +1,13 @@
 import numpy as np
 from collections import deque, namedtuple
 import torch
+import random
+
 
 #Implemented from: https://github.com/QasimWani/policy-value-methods/blob/master/DDPG/ddpg_agent.py#L150
+
+#Set to cuda (gpu) instance if compute available
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 BUFFER_SIZE = int(1e6) #max number of experiences in a buffer
@@ -21,7 +26,6 @@ class ReplayBuffer():
         2. buffer_size: Maximum length of the buffer for extrapolating all experiences into trajectories. default - 1e6 (Source: DeepMind)
         3. batch_size: size of mini-batch to train on. default = 64.
         """
-        self.action_size = action_size
         self.replay_memory = deque(maxlen=buffer_size) #Experience replay memory object
         self.batch_size = batch_size
         self.experience = namedtuple("Experience", field_names=["state", "action", "reward", "next_state", "done"]) #standard S,A,R,S',done

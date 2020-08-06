@@ -1,5 +1,6 @@
 from model import Actor, Critic
 from utils import ReplayBuffer
+import random
 import copy
 
 import torch
@@ -11,7 +12,9 @@ import torch.optim as optim
 #implementation from paper: https://arxiv.org/pdf/1802.09477.pdf
 #source: https://github.com/sfujim/TD3/blob/master/TD3.py
 
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+#Set to cuda (gpu) instance if compute available
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
 
 class Agent():
     """Agent that plays and learn from experience. Hyper-paramters chosen from paper."""
@@ -69,7 +72,7 @@ class Agent():
         self.total_it += 1
 
         # Sample replay buffer 
-        state, action, next_state, reward, not_done = replay_buffer.sample()#sample 100 experiences
+        state, action, reward, next_state, done = replay_buffer.sample()#sample 100 experiences
 
         with torch.no_grad():
             # Select action according to policy and add clipped noise
@@ -77,6 +80,7 @@ class Agent():
                 torch.randn_like(action) * self.policy_noise
             ).clamp(-self.noise_clip, self.noise_clip)
             
+
             next_action = (
                 self.actor_target(next_state) + noise #noise only set in training to prevent from overestimation
             ).clamp(-self.max_action, self.max_action)
@@ -84,7 +88,7 @@ class Agent():
             # Compute the target Q value
             target_Q1, target_Q2 = self.critic_target(next_state, next_action) #Q1, Q2
             target_Q = torch.min(target_Q1, target_Q2)
-            target_Q = reward + not_done * self.discount * target_Q #TD-target
+            target_Q = reward + done * self.discount * target_Q #TD-target
 
         # Get current Q estimates
         current_Q1, current_Q2 = self.critic(state, action) #Q1, Q2
@@ -101,7 +105,7 @@ class Agent():
         if(self.total_it % self.policy_freq == 0):
 
             # Compute actor loss
-            actor_loss = -self.critic.Q1(state, self.actor(state)).mean()
+            actor_loss = -self.critic(state, self.actor(state))[0].mean()
             
             # Optimize the actor 
             self.actor_optimizer.zero_grad()
@@ -116,21 +120,21 @@ class Agent():
                 target_param.data.copy_(self.tau * param.data + (1 - self.tau) * target_param.data)
 
 
-        def save(self, filename):
-            """Saves the Actor Critic local and target models"""
-            torch.save(self.critic.state_dict(), "models/checkpoint/"+ filename + "_critic")
-            torch.save(self.critic_optimizer.state_dict(), "models/checkpoint/" + filename + "_critic_optimizer")
+    def save(self, filename):
+        """Saves the Actor Critic local and target models"""
+        torch.save(self.critic.state_dict(), "models/checkpoint/"+ filename + "_critic")
+        torch.save(self.critic_optimizer.state_dict(), "models/checkpoint/" + filename + "_critic_optimizer")
 
-            torch.save(self.actor.state_dict(), "models/checkpoint/" + filename + "_actor")
-            torch.save(self.actor_optimizer.state_dict(), "models/checkpoint/" + filename + "_actor_optimizer")
+        torch.save(self.actor.state_dict(), "models/checkpoint/" + filename + "_actor")
+        torch.save(self.actor_optimizer.state_dict(), "models/checkpoint/" + filename + "_actor_optimizer")
 
 
-        def load(self, filename):
-            """Loads the Actor Critic local and target models"""
-            self.critic.load_state_dict(torch.load("models/checkpoint/" + filename + "_critic"))
-            self.critic_optimizer.load_state_dict(torch.load("models/checkpoint/" + filename + "_critic_optimizer"))
-            self.critic_target = copy.deepcopy(self.critic)
+    def load(self, filename):
+        """Loads the Actor Critic local and target models"""
+        self.critic.load_state_dict(torch.load("models/checkpoint/" + filename + "_critic"))
+        self.critic_optimizer.load_state_dict(torch.load("models/checkpoint/" + filename + "_critic_optimizer"))
+        self.critic_target = copy.deepcopy(self.critic)
 
-            self.actor.load_state_dict(torch.load("models/checkpoint/" + filename + "_actor"))
-            self.actor_optimizer.load_state_dict(torch.load("models/checkpoint/" + filename + "_actor_optimizer"))
-            self.actor_target = copy.deepcopy(self.actor)
+        self.actor.load_state_dict(torch.load("models/checkpoint/" + filename + "_actor"))
+        self.actor_optimizer.load_state_dict(torch.load("models/checkpoint/" + filename + "_actor_optimizer"))
+        self.actor_target = copy.deepcopy(self.actor)
