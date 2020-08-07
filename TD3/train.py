@@ -73,7 +73,7 @@ for episode in range(1, max_episodes+1):
             ep_reward.append(avg_reward)
             break 
     
-    if(avg_reward >= 270):
+    if(np.mean(ep_reward[-10:]) >= 300):
           policy.save("final")
           break
 
