@@ -22,7 +22,7 @@ max_action = float(env.action_space.high[0])
 #Create Agent
 policy = Agent(state_space, action_space, max_action)
 try:
-    policy.load("15")#1500 episode policy    
+    policy.load("final")
 except:
     raise IOError("Couldn't load policy")
 
