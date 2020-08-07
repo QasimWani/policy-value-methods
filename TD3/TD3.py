@@ -139,10 +139,10 @@ class Agent():
 
     def load(self, filename):
         """Loads the Actor Critic local and target models"""
-        self.critic.load_state_dict(torch.load("models/checkpoint/" + filename + "_critic"))
-        self.critic_optimizer.load_state_dict(torch.load("models/checkpoint/" + filename + "_critic_optimizer"))
+        self.critic.load_state_dict(torch.load("models/checkpoint/" + filename + "_critic", map_location='cpu'))
+        self.critic_optimizer.load_state_dict(torch.load("models/checkpoint/" + filename + "_critic_optimizer", map_location='cpu'))#optional
         self.critic_target = copy.deepcopy(self.critic)
 
-        self.actor.load_state_dict(torch.load("models/checkpoint/" + filename + "_actor"))
-        self.actor_optimizer.load_state_dict(torch.load("models/checkpoint/" + filename + "_actor_optimizer"))
+        self.actor.load_state_dict(torch.load("models/checkpoint/" + filename + "_actor", map_location='cpu'))
+        self.actor_optimizer.load_state_dict(torch.load("models/checkpoint/" + filename + "_actor_optimizer", map_location='cpu'))#optional
         self.actor_target = copy.deepcopy(self.actor)

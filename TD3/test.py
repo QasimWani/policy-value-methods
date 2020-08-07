@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import utils
 from TD3 import Agent
 
-env_id = "BipedalWalker-v2"
+env_id = "BipedalWalkerHardcore-v2"
 env = gym.make(env_id)
 
 
@@ -21,15 +21,14 @@ max_action = float(env.action_space.high[0])
 
 #Create Agent
 policy = Agent(state_space, action_space, max_action)
-
 try:
-    policy.load("02")    
+    policy.load("15")#1500 episode policy    
 except:
     raise IOError("Couldn't load policy")
 
 
 #Train the model
-max_episodes = 5
+max_episodes = 15
 max_timesteps = 2000
 
 ep_reward = [] #get list of reward for range(max_episodes)
