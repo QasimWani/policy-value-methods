@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import utils
 from TD3 import Agent
 
-env_id = "BipedalWalker-v2"
+env_id = "BipedalWalkerHardcore-v2"
 env = gym.make(env_id)
 
 
@@ -40,7 +40,7 @@ replay_buffer = utils.ReplayBuffer()
 
 
 #Train the model
-max_episodes = 1_000
+max_episodes = 4_000
 max_timesteps = 2_000
 
 ep_reward = [] #get list of reward for range(max_episodes)
