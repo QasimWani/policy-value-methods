@@ -30,10 +30,10 @@ max_action = float(env.action_space.high[0])
 #Create Agent
 policy = Agent(state_space, action_space, max_action)
 
-try:
-    policy.load("09")
-except:
-    raise IOError("Couldn't load policy")
+# try:
+#     policy.load("09")
+# except:
+#     raise IOError("Couldn't load policy")
 
 #Create Replay Buffer
 replay_buffer = utils.ReplayBuffer()
@@ -62,14 +62,14 @@ for episode in range(1, max_episodes+1):
 
         #Renders an episode
         # env.render()
-
+        if(len(replay_buffer) > 256):#make sure sample is less than overall population
+            policy.train(replay_buffer) #training mode
 
         # if episode is done then update policy:
         if(done or t >=max_timesteps):
             print(f"Episode {episode} reward: {avg_reward} | Rolling average: {np.mean(ep_reward)}")
             print(f"Current time step: {t}")
-            if(len(replay_buffer) > 256):#make sure sample is less than overall population
-                policy.train(replay_buffer) #training mode
+            
             ep_reward.append(avg_reward)
             break 
     
@@ -79,7 +79,7 @@ for episode in range(1, max_episodes+1):
 
     if(episode % 100 == 0 and episode > 0):
         #Save policy and optimizer every 100 episodes
-        policy.save(str("%02d" % (10 + episode//100)))
+        policy.save(str("%02d" % (episode//100)))
 
 env.close()
 

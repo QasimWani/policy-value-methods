@@ -23,13 +23,13 @@ max_action = float(env.action_space.high[0])
 policy = Agent(state_space, action_space, max_action)
 
 try:
-    policy.load("09")
+    policy.load("10")    
 except:
     raise IOError("Couldn't load policy")
 
 
 #Train the model
-max_episodes = 5
+max_episodes = 10
 max_timesteps = 2000
 
 ep_reward = [] #get list of reward for range(max_episodes)

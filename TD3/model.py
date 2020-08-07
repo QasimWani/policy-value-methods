@@ -22,9 +22,9 @@ class Actor(nn.Module):
         super(Actor, self).__init__()
 
         #Layer 1
-        self.fc1 = nn.Linear(state_size, fc1)
+        self.l1 = nn.Linear(state_size, fc1)
         #Layer 2
-        self.fc2 = nn.Linear(fc1, fc2)
+        self.l2 = nn.Linear(fc1, fc2)
         #Layer 3
         self.mu = nn.Linear(fc2, action_size)
 
@@ -34,10 +34,10 @@ class Actor(nn.Module):
     def forward(self, state):
         """Peforms forward pass to map state--> pi(s)"""
         #Layer 1
-        x = self.fc1(state)
+        x = self.l1(state)
         x = F.relu(x)
         #Layer 2
-        x = self.fc2(x)
+        x = self.l2(x)
         x = F.relu(x)
         #Output layer
         mu = torch.tanh(self.mu(x))#set action b/w -1 and +1
