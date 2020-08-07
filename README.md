@@ -15,7 +15,7 @@ My implementation on bunch of policy value methods from scratch
 
 ### Results:
 
-### BipedalWalker-v3 (TD3) {completion time ~14seconds, achieved after 1944 episodes}
+### BipedalWalker-v3 (TD3) {completion time ~14seconds, achieved after 500 episodes}
 ![](https://github.com/QasimWani/policy-value-methods/blob/master/TD3/models/output/gifs/final_policy.gif)
 #### Score
 ![](https://github.com/QasimWani/policy-value-methods/blob/master/TD3/models/output/stats/scores_1944.png)
