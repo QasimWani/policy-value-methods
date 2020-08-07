@@ -40,8 +40,8 @@ replay_buffer = utils.ReplayBuffer()
 
 
 #Train the model
-max_episodes = 1000
-max_timesteps = 2000
+max_episodes = 1_000
+max_timesteps = 2_000
 
 ep_reward = [] #get list of reward for range(max_episodes)
 
@@ -62,7 +62,7 @@ for episode in range(1, max_episodes+1):
 
         #Renders an episode
         # env.render()
-        if(len(replay_buffer) > 256):#make sure sample is less than overall population
+        if(len(replay_buffer) > 100):#make sure sample is less than overall population
             policy.train(replay_buffer) #training mode
 
         # if episode is done then update policy:

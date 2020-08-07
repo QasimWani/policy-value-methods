@@ -45,13 +45,15 @@ class Agent():
 
         #Actor Network initialization
         self.actor = Actor(state_size, action_size, max_action).to(device)
+        self.actor.apply(self.init_weights)
         self.actor_target = copy.deepcopy(self.actor) #loads main model into target model
-        self.actor_optimizer = torch.optim.Adam(self.actor.parameters(), lr=3e-4)
+        self.actor_optimizer = torch.optim.Adam(self.actor.parameters(), lr=0.001)
 
         #Critic Network initialization
         self.critic = Critic(state_size, action_size).to(device)
+        self.critic.apply(self.init_weights)
         self.critic_target = copy.deepcopy(self.critic) #loads main model into target model
-        self.critic_optimizer = torch.optim.Adam(self.critic.parameters(), lr=3e-4)
+        self.critic_optimizer = torch.optim.Adam(self.critic.parameters(), lr=0.001)
 
         self.max_action = max_action
         self.discount = discount
@@ -60,6 +62,12 @@ class Agent():
         self.noise_clip = noise_clip
         self.policy_freq = policy_freq
         self.total_it = 0
+
+    def init_weights(self, layer):
+        """Xaviar Initialization of weights"""
+        if(type(layer) == nn.Linear):
+          nn.init.xavier_normal_(layer.weight)
+          layer.bias.data.fill_(0.01)
 
     def select_action(self, state):
         """Selects an automatic epsilon-greedy action based on the policy"""
@@ -88,7 +96,7 @@ class Agent():
             # Compute the target Q value
             target_Q1, target_Q2 = self.critic_target(next_state, next_action) #Q1, Q2
             target_Q = torch.min(target_Q1, target_Q2)
-            target_Q = reward + done * self.discount * target_Q #TD-target
+            target_Q = reward + (1 - done) * self.discount * target_Q #TD-target
 
         # Get current Q estimates
         current_Q1, current_Q2 = self.critic(state, action) #Q1, Q2
@@ -132,9 +140,9 @@ class Agent():
     def load(self, filename):
         """Loads the Actor Critic local and target models"""
         self.critic.load_state_dict(torch.load("models/checkpoint/" + filename + "_critic"))
-        # self.critic_optimizer.load_state_dict(torch.load("models/checkpoint/" + filename + "_critic_optimizer"))
+        self.critic_optimizer.load_state_dict(torch.load("models/checkpoint/" + filename + "_critic_optimizer"))
         self.critic_target = copy.deepcopy(self.critic)
 
         self.actor.load_state_dict(torch.load("models/checkpoint/" + filename + "_actor"))
-        # self.actor_optimizer.load_state_dict(torch.load("models/checkpoint/" + filename + "_actor_optimizer"))
+        self.actor_optimizer.load_state_dict(torch.load("models/checkpoint/" + filename + "_actor_optimizer"))
         self.actor_target = copy.deepcopy(self.actor)
