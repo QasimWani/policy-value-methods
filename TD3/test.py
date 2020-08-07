@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import utils
 from TD3 import Agent
 
-env_id = "BipedalWalkerHardcore-v2"
+env_id = "BipedalWalker-v3"
 env = gym.make(env_id)
 
 
