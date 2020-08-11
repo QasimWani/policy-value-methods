@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import utils
 from TD3 import Agent
 
-env_id = "BipedalWalkerHardcore-v2"
+env_id = "BipedalWalker-v3"
 env = gym.make(env_id)
 
 
@@ -30,10 +30,10 @@ max_action = float(env.action_space.high[0])
 #Create Agent
 policy = Agent(state_space, action_space, max_action)
 
-# try:
-#     policy.load("09")
-# except:
-#     raise IOError("Couldn't load policy")
+try:
+    policy.load("final")
+except:
+    raise IOError("Couldn't load policy")
 
 #Create Replay Buffer
 replay_buffer = utils.ReplayBuffer()
@@ -62,6 +62,7 @@ for episode in range(1, max_episodes+1):
 
         #Renders an episode
         # env.render()
+        
         if(len(replay_buffer) > 100):#make sure sample is less than overall population
             policy.train(replay_buffer) #training mode
 
